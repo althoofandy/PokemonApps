@@ -1,22 +1,28 @@
 package com.example.features.viewmodel
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import androidx.paging.map
+import androidx.paging.liveData
 import com.example.data.repository.PokemonRepository
-import kotlinx.coroutines.flow.map
 
 class PokemonListViewModel(
-    pokemonRepository: PokemonRepository
+    private val pokemonRepository: PokemonRepository
 ) : ViewModel() {
 
-    val pokemonPagingData = pokemonRepository.getPokemonPager()
-        .flow
-        .map { pagingData ->
-            pagingData.map { it }
+    private val searchQuery = MutableLiveData("")
+
+    val pokemonList = searchQuery.switchMap { query ->
+        pokemonRepository.getPokemonName(query)
+            .liveData
+    }.cachedIn(viewModelScope)
+
+    fun setQuery(query: String?) {
+        if (searchQuery.value != query) {
+            searchQuery.value = query
         }
-        .cachedIn(viewModelScope)
-        .asLiveData()
+    }
 }
+

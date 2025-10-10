@@ -1,4 +1,4 @@
-package com.example.features.ui
+package com.example.features.ui.favorite
 
 import android.os.Bundle
 import android.view.LayoutInflater

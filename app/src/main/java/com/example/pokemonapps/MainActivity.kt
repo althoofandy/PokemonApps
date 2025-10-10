@@ -2,7 +2,7 @@ package com.example.pokemonapps
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.features.ui.PokemonListFragment
+import com.example.features.ui.list.PokemonListFragment
 import com.example.pokemonapps.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

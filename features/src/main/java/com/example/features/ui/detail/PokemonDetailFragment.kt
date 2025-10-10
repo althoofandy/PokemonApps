@@ -1,4 +1,4 @@
-package com.example.features.ui
+package com.example.features.ui.detail
 
 import android.graphics.Color
 import android.os.Bundle
@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.example.core.base.BaseFragment
 import com.example.core.model.PokemonDetailUIModel
 import com.example.core.utils.isLoading
+import com.example.core.utils.onError
 import com.example.core.utils.onSuccess
 import com.example.data.local.PokemonFavoriteEntity
 import com.example.features.R
@@ -35,6 +36,9 @@ class PokemonDetailFragment :
             showLoading(binding.progressBar, state.isLoading)
             state.onSuccess {
                 initSuccess(it)
+            }
+            state.onError {
+                showToast("Error")
             }
         }
     }

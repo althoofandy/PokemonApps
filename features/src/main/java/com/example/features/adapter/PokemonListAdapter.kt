@@ -1,6 +1,5 @@
 package com.example.features.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -25,8 +24,6 @@ class PokemonListAdapter :
 
         fun bind(item: PokemonListUiModel) = binding.apply {
             tvName.text = item.name
-            Log.d("PokemonListAdapter", "Name: ${item.name}")
-            Log.d("PokemonListAdapter", "Image URL: ${item.imageUrl}")
             Glide.with(ivPokemon).load(item.imageUrl).into(ivPokemon)
 
             root.setOnClickListener {

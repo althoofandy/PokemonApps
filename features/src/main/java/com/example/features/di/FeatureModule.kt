@@ -8,6 +8,6 @@ import org.koin.dsl.module
 
 val featureModule = module {
     viewModel { PokemonListViewModel(get()) }
-    viewModel { PokemonDetailViewModel(get(), get()) }
+    viewModel { PokemonDetailViewModel(get(), get(), get()) }
     viewModel { FavoritePokemonViewModel(get()) }
 }

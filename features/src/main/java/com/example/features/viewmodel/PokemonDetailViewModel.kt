@@ -4,16 +4,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.core.model.CoroutinesDispatcherProvider
 import com.example.core.model.PokemonDetailUIModel
 import com.example.core.utils.UiState
 import com.example.data.local.PokemonFavoriteEntity
 import com.example.data.repository.PokemonLocalRepository
 import com.example.data.repository.PokemonRepository
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PokemonDetailViewModel(
     private val repository: PokemonRepository,
-    private val localRepo: PokemonLocalRepository
+    private val localRepo: PokemonLocalRepository,
+    private val dispatcher: CoroutinesDispatcherProvider
 ) : ViewModel() {
 
     private val _pokemonDetail = MutableLiveData<UiState<PokemonDetailUIModel>>()
@@ -30,20 +33,18 @@ class PokemonDetailViewModel(
 
     fun getPokemonDetail(name: String) = viewModelScope.launch {
         _pokemonDetail.value = UiState.Loading
-        when (val response = repository.getPokemonDetail(name)) {
-            is UiState.Success -> {
-                val detail = response.data
-                val favorite = localRepo.isFavorite(detail.id)
-                _pokemonDetail.value = UiState.Success(
-                    detail.copy(isFavorite = favorite)
-                )
-            }
 
-            is UiState.Error -> _pokemonDetail.value = UiState.Error(response.message)
-            UiState.Loading -> _pokemonDetail.value = UiState.Loading
-           else -> {}
+        val response = withContext(dispatcher.io) {
+            repository.getPokemonDetail(name)
         }
 
+        if (response is UiState.Success) {
+            val favorite = withContext(dispatcher.io) { localRepo.isFavorite(response.data.id) }
+            _pokemonDetail.value = UiState.Success(response.data.copy(isFavorite = favorite))
+        } else if (response is UiState.Error) {
+            _pokemonDetail.value = UiState.Error(response.message)
+        }
     }
+
 }
 

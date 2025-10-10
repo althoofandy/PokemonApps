@@ -1,6 +1,7 @@
 package com.example.data.di
 
 import androidx.room.Room
+import com.example.core.model.CoroutinesDispatcherProvider
 import com.example.core.network.ApiService
 import com.example.data.local.AppDatabase
 import com.example.data.repository.PokemonLocalRepository
@@ -9,7 +10,6 @@ import com.example.data.repository.PokemonRepository
 import com.example.data.repository.PokemonRepositoryImpl
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -23,9 +23,9 @@ val dataModule = module {
             "pokemon-db"
         ).build()
     }
-
+    single { CoroutinesDispatcherProvider() }
     single { get<AppDatabase>().pokemonFavoriteDao() }
-    single<PokemonRepository> { PokemonRepositoryImpl(get()) }
+    single<PokemonRepository> { PokemonRepositoryImpl(get(), get()) }
     single<PokemonLocalRepository> { PokemonLocalRepositoryImpl(get()) }
 }
 

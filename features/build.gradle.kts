@@ -52,4 +52,7 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.koin.android)
     implementation(libs.github.glide)
+
+//    Material3
+    implementation(libs.androidx.material3)
 }

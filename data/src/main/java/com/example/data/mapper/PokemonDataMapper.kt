@@ -11,7 +11,7 @@ fun PokemonListResponse.toUiModel(): List<PokemonListUiModel> {
         val id = it.url?.trimEnd('/')?.split("/")?.last()?.toInt()
         PokemonListUiModel(
             name = it.name ?: "",
-            imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png"
+            imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png"
         )
     } ?: emptyList()
 }

@@ -1,4 +1,4 @@
-package com.example.features.ui
+package com.example.features.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

@@ -15,7 +15,7 @@ class PokemonListViewModel(
     private val searchQuery = MutableLiveData("")
 
     val pokemonList = searchQuery.switchMap { query ->
-        pokemonRepository.getPokemonName(query)
+        pokemonRepository.getPokemonList(query)
             .liveData
     }.cachedIn(viewModelScope)
 

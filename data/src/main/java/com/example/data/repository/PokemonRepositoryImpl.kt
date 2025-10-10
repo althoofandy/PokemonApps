@@ -26,23 +26,11 @@ class PokemonRepositoryImpl(
         }
     }
 
-    override fun getPokemonName(query: String): Pager<Int, PokemonListUiModel> {
+    override fun getPokemonList(query: String): Pager<Int, PokemonListUiModel> {
         return Pager(
             config = PagingConfig(pageSize = 20),
             pagingSourceFactory = { PokemonPagingSource(apiService, dispatcher, query) }
         )
     }
-
-    override fun getPokemonPager(): Pager<Int, PokemonListUiModel> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = 20,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = { PokemonPagingSource(apiService, dispatcher) }
-        )
-    }
-
-
 }
 

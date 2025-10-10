@@ -1,4 +1,7 @@
 <resources>
+    <!-- Base application theme. -->
+    <style name="Base.Theme.PokemonApps" parent="Theme.Material3.DayNight.NoActionBar" />
+
 
     <style name="Theme.PokemonApps" parent="Base.Theme.PokemonApps">
         <item name="android:statusBarColor">?attr/colorSurfaceContainerLowest</item>

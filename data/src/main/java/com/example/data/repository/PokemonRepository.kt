@@ -6,7 +6,6 @@ import com.example.core.model.PokemonListUiModel
 import com.example.core.utils.UiState
 
 interface PokemonRepository {
-    fun getPokemonPager(): Pager<Int, PokemonListUiModel>
-    fun getPokemonName(query: String): Pager<Int, PokemonListUiModel>
+    fun getPokemonList(query: String): Pager<Int, PokemonListUiModel>
     suspend fun getPokemonDetail(name: String): UiState<PokemonDetailUIModel>
 }

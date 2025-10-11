@@ -66,9 +66,12 @@ class PokemonDetailFragment :
             .into(ivPokemonDetail)
 
         tvPokemonNameDetail.text = data.name.capitalize()
-        tvPokemonHeight.text = "Height: ${data.height}"
-        tvPokemonWeight.text = "Weight: ${data.weight}"
-        tvPokemonDescription.text = data.description
+        tvPokemonHeight.text = data.height
+        tvPokemonWeight.text = data.weight
+        binding.tvPokemonDescription.text =
+            data.description.ifBlank { getString(R.string.no_description_available) }
+
+
 
         containerTypes.removeAllViews()
         data.types.forEach { type ->

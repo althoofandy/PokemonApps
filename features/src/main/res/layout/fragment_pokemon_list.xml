@@ -30,6 +30,10 @@
                 android:hint="@string/search" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <include
+            android:id="@+id/layoutEmptyState"
+            layout="@layout/pokemon_empty_state" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewPokemon"
             android:layout_marginHorizontal="8dp"

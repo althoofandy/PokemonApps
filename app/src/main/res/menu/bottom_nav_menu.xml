@@ -5,14 +5,14 @@
         <item
             android:id="@+id/homeFragment"
             android:icon="@drawable/baseline_favorite_24"
-            android:title="Home" />
+            android:title="@string/home" />
         <item
             android:id="@+id/pokemonListFragment"
             android:icon="@drawable/baseline_favorite_24"
-            android:title="Poke" />
+            android:title="Pokédex" />
         <item
             android:id="@+id/favoriteFragment"
             android:icon="@drawable/baseline_favorite_24"
-            android:title="Favorites" />
+            android:title="@string/favorite" />
     </group>
 </menu>

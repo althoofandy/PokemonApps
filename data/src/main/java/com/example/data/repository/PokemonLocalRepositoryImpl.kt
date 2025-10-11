@@ -21,8 +21,7 @@ class PokemonLocalRepositoryImpl(
     override suspend fun updateFavorite(pokemon: PokemonFavoriteEntity) {
         val existing = dao.getById(pokemon.id)
         if (existing != null) {
-            val updated = existing.copy(isFavorite = !existing.isFavorite)
-            dao.updateFavorite(updated)
+            dao.removeFavorite(pokemon.id)
         } else {
             dao.addFavorite(pokemon.copy(isFavorite = true))
         }

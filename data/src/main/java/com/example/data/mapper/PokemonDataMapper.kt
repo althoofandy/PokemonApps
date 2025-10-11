@@ -6,6 +6,7 @@ import com.example.core.model.PokemonListResponse
 import com.example.core.model.PokemonListUiModel
 import com.example.core.model.PokemonSpeciesResponse
 import com.example.core.model.StatUIModel
+import java.util.Locale
 
 fun PokemonListResponse.toUiModel(): List<PokemonListUiModel> {
     return results?.map {
@@ -17,18 +18,18 @@ fun PokemonListResponse.toUiModel(): List<PokemonListUiModel> {
     } ?: emptyList()
 }
 
-fun PokemonSpeciesResponse.toFlavorText(): String {
+fun PokemonSpeciesResponse.toFlavorText(): String? {
+    val lang = Locale.getDefault().language
     return flavorTextEntries
-        ?.firstOrNull { it?.language?.name == "en" }
+        ?.firstOrNull { it?.language?.name.equals(lang, true) }
         ?.flavorText
         ?.replace("\n", " ")
         ?.replace("\u000c", " ")
         ?.trim()
-        ?: "No description available."
 }
 
 fun PokemonDetailResponse.toUIModel(
-    flavorText: String? = "No description available.",
+    flavorText: String? = null,
     color: String? = "#FFFFFF"
 ): PokemonDetailUIModel {
     return PokemonDetailUIModel(

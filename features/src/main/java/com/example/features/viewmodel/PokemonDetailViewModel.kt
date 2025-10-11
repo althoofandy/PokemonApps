@@ -44,6 +44,5 @@ class PokemonDetailViewModel(
             _pokemonDetail.value = UiState.Error(response.message)
         }
     }
-
 }
 

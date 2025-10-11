@@ -1,7 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PokemonApps</string>
     <string name="en">EN</string>
     <string name="id">ID</string>
-    <string name="home">Home</string>
-    <string name="favorite">Favorite</string>
+    <string name="home">Beranda</string>
+    <string name="favorite">Favorit</string>
 </resources>

@@ -8,13 +8,13 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.features.ui.home.HomeFragment"
-        android:label="Home"
+        android:label="@string/home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/pokemonListFragment"
         android:name="com.example.features.ui.list.PokemonListFragment"
-        android:label="Poke"
+        android:label="Pokédex"
         tools:layout="@layout/fragment_pokemon_list" />
 
     <fragment

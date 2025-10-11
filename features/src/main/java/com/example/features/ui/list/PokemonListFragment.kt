@@ -1,6 +1,7 @@
 package com.example.features.ui.list
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
@@ -33,13 +34,10 @@ class PokemonListFragment : BaseFragment<FragmentPokemonListBinding>() {
         FragmentPokemonListBinding.inflate(inflater, container, false)
 
     private fun setRecyclerView() = binding.apply {
-        val layoutManager = context?.let { ctx ->
-            GridLayoutManager(ctx, 2)
-        }
-        layoutManager?.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+        val layoutManager = GridLayoutManager(requireContext(), 2)
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                val adapterItemCount = adapter.itemCount
-                return if (position >= adapterItemCount) layoutManager?.spanCount ?: 0 else 1
+                return if (position == adapter.itemCount && adapter.itemCount > 0) 2 else 1
             }
         }
 
@@ -47,6 +45,13 @@ class PokemonListFragment : BaseFragment<FragmentPokemonListBinding>() {
         recyclerViewPokemon.adapter = adapter.withLoadStateFooter(
             footer = PokemonLoadStateAdapter { adapter.retry() }
         )
+        adapter.addLoadStateListener { loadState ->
+            val isLoading = loadState.refresh is androidx.paging.LoadState.Loading
+            val isEmpty = loadState.refresh is androidx.paging.LoadState.NotLoading &&
+                    adapter.itemCount == 0
+            showLoading(isLoading)
+            showEmpty(isEmpty)
+        }
     }
 
     override fun observeData() {
@@ -63,5 +68,15 @@ class PokemonListFragment : BaseFragment<FragmentPokemonListBinding>() {
                 viewModel.searchPokemon(text.toString())
             }
         }
+    }
+
+    private fun showEmpty(state: Boolean) = binding.apply {
+        recyclerViewPokemon.visibility = if (state) View.GONE else View.VISIBLE
+        layoutEmptyState.layoutEmptyState.visibility = if (state) View.VISIBLE else View.GONE
+    }
+
+    private fun showLoading(state: Boolean) = binding.apply {
+        recyclerViewPokemon.visibility = if (state) View.GONE else View.VISIBLE
+        binding.progressBar.visibility = if (state) View.VISIBLE else View.GONE
     }
 }

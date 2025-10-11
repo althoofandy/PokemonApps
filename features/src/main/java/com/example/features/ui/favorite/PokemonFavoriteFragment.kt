@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.core.base.BaseFragment
+import com.example.core.utils.Navigator
 import com.example.features.adapter.FavoritePokemonAdapter
 import com.example.features.databinding.FragmentPokemonFavoriteBinding
 import com.example.features.viewmodel.FavoritePokemonViewModel
@@ -14,7 +15,11 @@ class FavoritePokemonFragment : BaseFragment<FragmentPokemonFavoriteBinding>() {
 
     private val viewModel: FavoritePokemonViewModel by viewModel()
     private val adapter by lazy {
-        FavoritePokemonAdapter()
+        FavoritePokemonAdapter().apply {
+            setOnItemClickListener { pokemon ->
+                (requireActivity() as? Navigator)?.toPokemonDetail(pokemon)
+            }
+        }
     }
 
     override fun getViewBinding(
@@ -30,8 +35,12 @@ class FavoritePokemonFragment : BaseFragment<FragmentPokemonFavoriteBinding>() {
         }
         viewModel.favorites.observe(viewLifecycleOwner) { list ->
             adapter.submitList(list)
-            binding.tvEmpty.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
+            showEmpty(list.isEmpty())
         }
     }
 
+    private fun showEmpty(state: Boolean) = binding.apply {
+        recyclerViewFavorites.visibility = if (state) View.GONE else View.VISIBLE
+        tvEmpty.visibility = if (state) View.VISIBLE else View.GONE
+    }
 }

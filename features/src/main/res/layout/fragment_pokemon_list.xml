@@ -1,8 +1,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="?attr/colorSurfaceContainerLowest">
 
     <LinearLayout
@@ -24,10 +24,10 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/tieSearch"
                 android:layout_width="match_parent"
-                android:imeOptions="actionSearch"
-                android:inputType="text"
                 android:layout_height="wrap_content"
-                android:hint="@string/search" />
+                android:hint="@string/search"
+                android:imeOptions="actionSearch"
+                android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <include
@@ -43,6 +43,7 @@
             tools:listitem="@layout/item_pokemon" />
     </LinearLayout>
 
+    <!-- Progress Bar -->
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleLarge"
@@ -50,5 +51,17 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:visibility="gone" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/btnScrollToTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:padding="12dp"
+        android:background="@drawable/bg_circle_elevated"
+        android:src="@drawable/baseline_keyboard_arrow_up_24"
+        android:visibility="gone" />
+
 
 </FrameLayout>

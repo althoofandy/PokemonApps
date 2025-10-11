@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.core.base.BaseFragment
 import com.example.core.utils.Navigator
 import com.example.features.adapter.PokemonListAdapter
@@ -34,10 +35,11 @@ class PokemonListFragment : BaseFragment<FragmentPokemonListBinding>() {
         FragmentPokemonListBinding.inflate(inflater, container, false)
 
     private fun setRecyclerView() = binding.apply {
-        val layoutManager = GridLayoutManager(requireContext(), 2)
-        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(position: Int): Int {
-                return if (position == adapter.itemCount && adapter.itemCount > 0) 2 else 1
+        val layoutManager = GridLayoutManager(requireContext(), 2).apply {
+            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    return if (position == adapter.itemCount && adapter.itemCount > 0) 2 else 1
+                }
             }
         }
 
@@ -45,14 +47,28 @@ class PokemonListFragment : BaseFragment<FragmentPokemonListBinding>() {
         recyclerViewPokemon.adapter = adapter.withLoadStateFooter(
             footer = PokemonLoadStateAdapter { adapter.retry() }
         )
+
         adapter.addLoadStateListener { loadState ->
             val isLoading = loadState.refresh is androidx.paging.LoadState.Loading
-            val isEmpty = loadState.refresh is androidx.paging.LoadState.NotLoading &&
-                    adapter.itemCount == 0
+            val isEmpty =
+                loadState.refresh is androidx.paging.LoadState.NotLoading && adapter.itemCount == 0
             showLoading(isLoading)
             showEmpty(isEmpty)
         }
+
+        recyclerViewPokemon.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val firstVisible = layoutManager.findFirstVisibleItemPosition()
+                btnScrollToTop.visibility = if (firstVisible > 5) View.VISIBLE else View.GONE
+            }
+        })
+
+        btnScrollToTop.setOnClickListener {
+            recyclerViewPokemon.smoothScrollToPosition(0)
+        }
     }
+
 
     override fun observeData() {
         super.observeData()

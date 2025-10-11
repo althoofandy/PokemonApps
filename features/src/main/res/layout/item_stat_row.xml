@@ -1,0 +1,33 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:paddingVertical="6dp">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvStatName"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        tools:text="HP"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <ProgressBar
+        android:id="@+id/pbStat"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="8dp"
+        android:layout_weight="1"
+        android:max="200"
+        android:layout_gravity="center_vertical"
+        android:progress="80" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvStatValue"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        tools:text="80"
+        android:textSize="14sp" />
+</LinearLayout>

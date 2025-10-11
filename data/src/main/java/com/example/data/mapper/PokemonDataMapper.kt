@@ -4,6 +4,7 @@ import com.example.core.model.PokemonDetailResponse
 import com.example.core.model.PokemonDetailUIModel
 import com.example.core.model.PokemonListResponse
 import com.example.core.model.PokemonListUiModel
+import com.example.core.model.PokemonSpeciesResponse
 import com.example.core.model.StatUIModel
 
 fun PokemonListResponse.toUiModel(): List<PokemonListUiModel> {
@@ -16,22 +17,43 @@ fun PokemonListResponse.toUiModel(): List<PokemonListUiModel> {
     } ?: emptyList()
 }
 
-fun PokemonDetailResponse.toUIModel(): PokemonDetailUIModel {
+fun PokemonSpeciesResponse.toFlavorText(): String {
+    return flavorTextEntries
+        ?.firstOrNull { it?.language?.name == "en" }
+        ?.flavorText
+        ?.replace("\n", " ")
+        ?.replace("\u000c", " ")
+        ?.trim()
+        ?: "No description available."
+}
+
+fun PokemonDetailResponse.toUIModel(
+    flavorText: String? = "No description available.",
+    color: String? = "#FFFFFF"
+): PokemonDetailUIModel {
     return PokemonDetailUIModel(
-        id = id,
-        name = name.replaceFirstChar { it.uppercase() },
-        imageUrl = sprites.other.officialArtwork.frontDefault.orEmpty(),
-        types = types.map { it.type.name.replaceFirstChar { c -> c.uppercase() } },
-        abilities = abilities.map { it.ability.name.replaceFirstChar { c -> c.uppercase() } },
-        stats = stats.map {
+        id = id ?: 0,
+        name = name?.replaceFirstChar { it.uppercase() }.orEmpty(),
+        imageUrl = sprites?.other?.officialArtwork?.frontDefault.orEmpty(),
+        types = types?.map {
+            it.type.name.replaceFirstChar { c -> c.uppercase() }
+        } ?: emptyList(),
+        abilities = abilities?.map {
+            it.ability.name.replaceFirstChar { c -> c.uppercase() }
+        } ?: emptyList(),
+        stats = stats?.map {
             StatUIModel(
                 name = it.stat.name.replace("-", " ").replaceFirstChar { c -> c.uppercase() },
                 value = it.base_stat
             )
-        },
-        height = "${height / 10.0} m",
-        weight = "${weight / 10.0} kg",
-        moves = moves.take(10).map { it.move.name.replaceFirstChar { c -> c.uppercase() } },
+        } ?: emptyList(),
+        height = "${height?.div(10.0)} m",
+        weight = "${weight?.div(10.0)} kg",
+        moves = moves?.take(10)?.map {
+            it.move.name.replaceFirstChar { c -> c.uppercase() }
+        } ?: emptyList(),
+        description = flavorText.orEmpty(),
+        color = color.orEmpty(),
         isFavorite = false
     )
 }

@@ -25,7 +25,6 @@ class PokemonListAdapter :
         fun bind(item: PokemonListUiModel) = binding.apply {
             tvName.text = item.name
             Glide.with(ivPokemon).load(item.imageUrl).into(ivPokemon)
-
             root.setOnClickListener {
                 onItemClickListener?.invoke(item)
             }
@@ -33,8 +32,8 @@ class PokemonListAdapter :
     }
 
     override fun onBindViewHolder(holder: PokemonViewHolder, position: Int) {
-        val item = getItem(position)
-        if (item != null) holder.bind(item)
+        val item = getItem(position) ?: return
+        holder.bind(item)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PokemonViewHolder {

@@ -12,15 +12,16 @@ data class PokemonResult(
 )
 
 data class PokemonDetailResponse(
-    val id: Int,
-    val name: String,
-    val sprites: Sprites,
-    val types: List<TypeSlot>,
-    val abilities: List<AbilitySlot>,
-    val stats: List<StatSlot>,
-    val height: Int,
-    val weight: Int,
-    val moves: List<MoveSlot>
+    val id: Int? = null,
+    val name: String? = null,
+    val sprites: Sprites? = null,
+    val types: List<TypeSlot>? = null,
+    val abilities: List<AbilitySlot>? = null,
+    val stats: List<StatSlot>? = null,
+    val height: Int? = null,
+    val weight: Int? = null,
+    val description: String? = null,
+    val moves: List<MoveSlot>? = null
 )
 
 data class Sprites(

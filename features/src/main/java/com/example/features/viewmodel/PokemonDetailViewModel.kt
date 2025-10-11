@@ -37,7 +37,6 @@ class PokemonDetailViewModel(
         val response = withContext(dispatcher.io) {
             repository.getPokemonDetail(name)
         }
-
         if (response is UiState.Success) {
             val favorite = withContext(dispatcher.io) { localRepo.isFavorite(response.data.id) }
             _pokemonDetail.value = UiState.Success(response.data.copy(isFavorite = favorite))

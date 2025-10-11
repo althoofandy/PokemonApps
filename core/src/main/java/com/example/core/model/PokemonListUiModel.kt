@@ -15,6 +15,8 @@ data class PokemonDetailUIModel(
     val height: String,
     val weight: String,
     val moves: List<String>,
+    val description: String,
+    val color: String,
     val isFavorite: Boolean
 )
 

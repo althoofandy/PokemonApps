@@ -7,17 +7,6 @@ sealed class NetworkResultWrapper<out T> {
     data class Exception(val throwable: Throwable) : NetworkResultWrapper<Nothing>()
 }
 
-suspend fun <Input, Output> processResponse(
-    result: NetworkResultWrapper<Input>,
-    successBlock: suspend (Input) -> Output
-): UiState<Output> {
-    return when (result) {
-        is NetworkResultWrapper.Error -> UiState.Error(result.message ?: "Unknown error")
-        is NetworkResultWrapper.Exception -> UiState.Error(result.throwable.message ?: "Exception occurred")
-        is NetworkResultWrapper.Success -> UiState.Success(successBlock(result.data))
-    }
-}
-
 suspend fun <T> safeApiCall(apiCall: suspend () -> T): NetworkResultWrapper<T> {
     return try {
         val result = apiCall()
@@ -28,6 +17,20 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> T): NetworkResultWrapper<T> {
         NetworkResultWrapper.Exception(e)
     } catch (e: Exception) {
         NetworkResultWrapper.Exception(e)
+    }
+}
+
+suspend fun <Input, Output> processResponse(
+    result: NetworkResultWrapper<Input>,
+    successBlock: suspend (Input) -> Output
+): UiState<Output> {
+    return when (result) {
+        is NetworkResultWrapper.Error -> UiState.Error(result.message ?: "Unknown error")
+        is NetworkResultWrapper.Exception -> UiState.Error(
+            result.throwable.message ?: "Exception occurred"
+        )
+
+        is NetworkResultWrapper.Success -> UiState.Success(successBlock(result.data))
     }
 }
 

@@ -1,28 +1,31 @@
 package com.example.features.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.liveData
+import com.example.core.model.PokemonListUiModel
 import com.example.data.repository.PokemonRepository
 
 class PokemonListViewModel(
     private val pokemonRepository: PokemonRepository
 ) : ViewModel() {
 
-    private val searchQuery = MutableLiveData("")
+    private val queryLiveData = MutableLiveData("")
 
-    val pokemonList = searchQuery.switchMap { query ->
-        pokemonRepository.getPokemonList(query)
-            .liveData
-    }.cachedIn(viewModelScope)
-
-    fun setQuery(query: String?) {
-        if (searchQuery.value != query) {
-            searchQuery.value = query
+    val pokemonPagingData: LiveData<PagingData<PokemonListUiModel>> =
+        queryLiveData.switchMap { query ->
+            pokemonRepository.getPokemonList(query)
+                .liveData
+                .cachedIn(viewModelScope)
         }
+
+    fun searchPokemon(query: String) {
+        queryLiveData.value = query
     }
 }
 

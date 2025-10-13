@@ -7,7 +7,6 @@ import com.bumptech.glide.Glide
 import com.example.core.base.BaseFragment
 import com.example.core.model.PokemonDetailUIModel
 import com.example.core.utils.Constant.POKENAME_ARGS
-import com.example.core.utils.PokemonSpeciesColor
 import com.example.core.utils.isLoading
 import com.example.core.utils.onError
 import com.example.core.utils.onSuccess
@@ -70,9 +69,8 @@ class PokemonDetailFragment :
         layoutDetailpokemon.tvTypes.text = pokemon.types.joinToString(" • ")
         Glide.with(layoutDetailpokemon.ivPokemon).load(pokemon.imageUrl)
             .into(layoutDetailpokemon.ivPokemon)
-        val speciesColor = PokemonSpeciesColor.fromString(pokemon.color).color
-        layoutDetailpokemon.llDetailPokemon.setBackgroundColor(speciesColor)
-        requireActivity().setStatusBarByColor(speciesColor)
+        layoutDetailpokemon.llDetailPokemon.setBackgroundColor(pokemon.color)
+        requireActivity().setStatusBarByColor(pokemon.color)
     }
 
     private fun setFavorite(data: PokemonDetailUIModel) {
@@ -92,5 +90,10 @@ class PokemonDetailFragment :
 
     override fun fetchData() {
         viewModel.getPokemonDetail(pokeName)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isPagerInitialized = false
     }
 }

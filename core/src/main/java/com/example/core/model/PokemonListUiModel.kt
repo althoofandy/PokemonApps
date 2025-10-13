@@ -20,7 +20,7 @@ data class PokemonDetailUIModel(
     val weight: String,
     val moves: List<String>,
     val description: String,
-    val color: String,
+    val color: Int,
     val isFavorite: Boolean,
     val evolutionList: List<EvolutionUIModel>
 ) : Parcelable

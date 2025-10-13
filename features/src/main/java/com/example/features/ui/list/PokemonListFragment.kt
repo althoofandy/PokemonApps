@@ -35,7 +35,7 @@ class PokemonListFragment : BaseFragment<FragmentPokemonListBinding>() {
     override fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
         FragmentPokemonListBinding.inflate(inflater, container, false)
 
-    private fun setRecyclerView() = binding.apply {
+    private fun setRecyclerView() = with(binding) {
         val layoutManager = GridLayoutManager(requireContext(), 2).apply {
             spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
@@ -74,8 +74,10 @@ class PokemonListFragment : BaseFragment<FragmentPokemonListBinding>() {
     override fun observeData() {
         super.observeData()
         setRecyclerView()
-        viewModel.pokemonPagingData.observe(viewLifecycleOwner) { pagingData ->
-            adapter.submitData(viewLifecycleOwner.lifecycle, pagingData)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.pokemonPagingData.observe(viewLifecycleOwner) { pagingData ->
+                adapter.submitData(viewLifecycleOwner.lifecycle, pagingData)
+            }
         }
 
         binding.tieSearch.addTextChangedListener { text ->

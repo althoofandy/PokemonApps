@@ -9,4 +9,6 @@
     <string name="no_description_available">No Description Available</string>
     <string name="no_pokemon_found_title">No Pokémon found</string>
     <string name="no_pokemon_found_title_desc">Try searching again or check your connection.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -21,8 +21,7 @@ class PokemonListViewModel(
         queryLiveData.switchMap { query ->
             getPokemonListUseCase(query)
                 .liveData
-                .cachedIn(viewModelScope)
-        }
+        }.cachedIn(viewModelScope)
 
     fun searchPokemon(query: String) {
         queryLiveData.value = query

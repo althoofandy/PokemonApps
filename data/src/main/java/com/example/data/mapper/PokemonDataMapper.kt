@@ -7,6 +7,7 @@ import com.example.core.model.PokemonListResponse
 import com.example.core.model.PokemonListUiModel
 import com.example.core.model.PokemonSpeciesResponse
 import com.example.core.model.StatUIModel
+import com.example.core.utils.PokemonSpeciesColor
 import java.util.Locale
 
 fun PokemonListResponse.toUiModel(): List<PokemonListUiModel> {
@@ -31,8 +32,8 @@ fun PokemonSpeciesResponse.toFlavorText(): String? {
 
 fun PokemonDetailResponse.toUIModel(
     flavorText: String? = null,
-    color: String? = "#FFFFFF",
-    evolutionList: List<EvolutionUIModel>?
+    color: String? = null,
+    evolutionList: List<EvolutionUIModel>? = null
 ): PokemonDetailUIModel {
     return PokemonDetailUIModel(
         id = id ?: 0,
@@ -56,7 +57,7 @@ fun PokemonDetailResponse.toUIModel(
             it.move.name.replaceFirstChar { c -> c.uppercase() }
         } ?: emptyList(),
         description = flavorText.orEmpty(),
-        color = color.orEmpty(),
+        color = PokemonSpeciesColor.fromString(color.toString()).color,
         isFavorite = false,
         evolutionList = evolutionList ?: emptyList()
     )

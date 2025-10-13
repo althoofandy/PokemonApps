@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.core.base.BaseFragment
 import com.example.core.model.PokemonDetailUIModel
-import com.example.core.utils.PokemonSpeciesColor
 import com.example.features.R
 import com.example.features.databinding.FragmentPokemonBaseStatsBinding
 import com.example.features.databinding.ItemStatRowBinding
@@ -32,7 +31,7 @@ class PokemonBaseStatsFragment : BaseFragment<FragmentPokemonBaseStatsBinding>()
         binding.containerStats.removeAllViews()
 
         data.stats.forEach { (name, value) ->
-            val speciesColor = PokemonSpeciesColor.fromString(data.color).color
+            val speciesColor = data.color
 
             val itemStat = ItemStatRowBinding.inflate(layoutInflater, binding.containerStats, false)
             itemStat.tvStatName.text = name.uppercase()

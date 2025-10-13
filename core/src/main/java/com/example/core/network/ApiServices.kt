@@ -1,11 +1,13 @@
 package com.example.core.network
 
+import com.example.core.model.PokemonChainResponse
 import com.example.core.model.PokemonDetailResponse
 import com.example.core.model.PokemonListResponse
 import com.example.core.model.PokemonSpeciesResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 interface ApiService {
     @GET("pokemon")
@@ -23,5 +25,10 @@ interface ApiService {
     suspend fun getPokemonSpecies(
         @Path("name") name: String
     ): PokemonSpeciesResponse
+
+    @GET
+    suspend fun getPokemonEvolutionChain(
+        @Url url: String
+    ): PokemonChainResponse
 
 }

@@ -1,5 +1,6 @@
 package com.example.data.mapper
 
+import com.example.core.model.EvolutionUIModel
 import com.example.core.model.PokemonDetailResponse
 import com.example.core.model.PokemonDetailUIModel
 import com.example.core.model.PokemonListResponse
@@ -30,7 +31,8 @@ fun PokemonSpeciesResponse.toFlavorText(): String? {
 
 fun PokemonDetailResponse.toUIModel(
     flavorText: String? = null,
-    color: String? = "#FFFFFF"
+    color: String? = "#FFFFFF",
+    evolutionList: List<EvolutionUIModel>?
 ): PokemonDetailUIModel {
     return PokemonDetailUIModel(
         id = id ?: 0,
@@ -55,6 +57,7 @@ fun PokemonDetailResponse.toUIModel(
         } ?: emptyList(),
         description = flavorText.orEmpty(),
         color = color.orEmpty(),
-        isFavorite = false
+        isFavorite = false,
+        evolutionList = evolutionList ?: emptyList()
     )
 }

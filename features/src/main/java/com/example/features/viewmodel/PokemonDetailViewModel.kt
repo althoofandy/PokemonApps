@@ -9,12 +9,12 @@ import com.example.core.model.PokemonDetailUIModel
 import com.example.core.utils.UiState
 import com.example.data.local.PokemonFavoriteEntity
 import com.example.data.repository.PokemonLocalRepository
-import com.example.data.repository.PokemonRepository
+import com.example.data.usecase.GetPokemonDetailUseCase
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class PokemonDetailViewModel(
-    private val repository: PokemonRepository,
+    private val getPokemonDetailUseCase: GetPokemonDetailUseCase,
     private val localRepo: PokemonLocalRepository,
     private val dispatcher: CoroutinesDispatcherProvider
 ) : ViewModel() {
@@ -35,7 +35,7 @@ class PokemonDetailViewModel(
         _pokemonDetail.value = UiState.Loading
 
         val response = withContext(dispatcher.io) {
-            repository.getPokemonDetail(name)
+            getPokemonDetailUseCase(name)
         }
         if (response is UiState.Success) {
             val favorite = withContext(dispatcher.io) { localRepo.isFavorite(response.data.id) }

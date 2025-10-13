@@ -29,16 +29,16 @@ enum class PokemonType(val color: Int) {
 }
 
 enum class PokemonSpeciesColor(val color: Int) {
-    BLACK(Color.parseColor("#A9A9A9")),
-    BLUE(Color.parseColor("#ADD8E6")),
-    BROWN(Color.parseColor("#D2B48C")),
-    GRAY(Color.parseColor("#C0C0C0")),
-    GREEN(Color.parseColor("#98FB98")),
-    PINK(Color.parseColor("#FFB6C1")),
-    PURPLE(Color.parseColor("#A040A0")),
-    RED(Color.parseColor("#FFA07A")),
-    WHITE(Color.parseColor("#F5F5F5")),
-    YELLOW(Color.parseColor("#F8D030"));
+    BLACK(Color.parseColor("#2C2C2C")),
+    BLUE(Color.parseColor("#7098AA")),
+    BROWN(Color.parseColor("#A08C78")),
+    GRAY(Color.parseColor("#8C8C8C")),
+    GREEN(Color.parseColor("#66AA66")),
+    PINK(Color.parseColor("#D0A0B0")),
+    PURPLE(Color.parseColor("#8A5DAA")),
+    RED(Color.parseColor("#C06060")),
+    WHITE(Color.parseColor("#E8E8E8")),
+    YELLOW(Color.parseColor("#D8C060"));
 
     companion object {
         fun fromString(colorName: String): PokemonSpeciesColor {
@@ -46,5 +46,3 @@ enum class PokemonSpeciesColor(val color: Int) {
         }
     }
 }
-
-

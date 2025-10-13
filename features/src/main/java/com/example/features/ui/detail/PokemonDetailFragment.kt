@@ -1,25 +1,21 @@
 package com.example.features.ui.detail
 
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.example.core.base.BaseFragment
 import com.example.core.model.PokemonDetailUIModel
 import com.example.core.utils.Constant.POKENAME_ARGS
 import com.example.core.utils.PokemonSpeciesColor
-import com.example.core.utils.PokemonType
 import com.example.core.utils.isLoading
 import com.example.core.utils.onError
 import com.example.core.utils.onSuccess
 import com.example.data.local.PokemonFavoriteEntity
-import com.example.features.R
+import com.example.features.adapter.PokemonDetailPagerAdapter
 import com.example.features.databinding.FragmentPokemonDetailBinding
-import com.example.features.databinding.ItemStatRowBinding
 import com.example.features.viewmodel.PokemonDetailViewModel
+import com.google.android.material.tabs.TabLayoutMediator
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PokemonDetailFragment :
@@ -29,6 +25,8 @@ class PokemonDetailFragment :
     private val pokeName by lazy { arguments?.getString(POKENAME_ARGS).orEmpty() }
     private var currentPokemonDetail: PokemonFavoriteEntity? = null
     private var isFavorite = false
+    private var isPagerInitialized = false
+
     override fun getViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -40,7 +38,11 @@ class PokemonDetailFragment :
         viewModel.pokemonDetail.observe(viewLifecycleOwner) { state ->
             showLoading(binding.progressBar, state.isLoading)
             state.onSuccess {
-                initSuccess(it)
+                if (!isPagerInitialized) {
+                    setupViewPager(it)
+                    isPagerInitialized = true
+                }
+                updateUI(it)
             }
             state.onError {
                 showToast("Error")
@@ -48,7 +50,33 @@ class PokemonDetailFragment :
         }
     }
 
-    private fun initSuccess(data: PokemonDetailUIModel) = binding.apply {
+    private fun setupViewPager(pokemon: PokemonDetailUIModel) = with(binding) {
+        val adapter = PokemonDetailPagerAdapter(this@PokemonDetailFragment, pokemon)
+        layoutDetailpokemon.viewPager.adapter = adapter
+        layoutDetailpokemon.viewPager.offscreenPageLimit = 3
+        TabLayoutMediator(
+            layoutDetailpokemon.tabLayout,
+            layoutDetailpokemon.viewPager
+        ) { tab, pos ->
+            tab.text = listOf("About", "Base Stats", "Evolution")[pos]
+        }.attach()
+    }
+
+    private fun updateUI(pokemon: PokemonDetailUIModel) = with(binding) {
+        setFavorite(pokemon)
+        layoutDetailpokemon.cvPagerPokemon.isVisible = true
+        layoutDetailpokemon.tvName.text = pokemon.name
+        layoutDetailpokemon.tvNumber.text = "#${pokemon.id}"
+        layoutDetailpokemon.tvTypes.text = pokemon.types.joinToString(" • ")
+        Glide.with(layoutDetailpokemon.ivPokemon).load(pokemon.imageUrl)
+            .into(layoutDetailpokemon.ivPokemon)
+        val speciesColor = PokemonSpeciesColor.fromString(pokemon.color).color
+        layoutDetailpokemon.llDetailPokemon.setBackgroundColor(speciesColor)
+        requireActivity().setStatusBarByColor(speciesColor)
+    }
+
+    private fun setFavorite(data: PokemonDetailUIModel) {
+        binding.layoutDetailpokemon.btnFavorite.isVisible = true
         isFavorite = data.isFavorite
         currentPokemonDetail = PokemonFavoriteEntity(
             id = data.id,
@@ -56,48 +84,8 @@ class PokemonDetailFragment :
             imageUrl = data.imageUrl,
             isFavorite = data.isFavorite
         )
-
-        llDetailPokemon.visibility = View.VISIBLE
-        btnFavorite.setColorFilter(if (data.isFavorite) Color.RED else Color.GRAY)
-
-        Glide.with(ivPokemonDetail)
-            .load(data.imageUrl)
-            .placeholder(R.drawable.ic_launcher_foreground)
-            .into(ivPokemonDetail)
-
-        tvPokemonNameDetail.text = data.name.capitalize()
-        tvPokemonHeight.text = data.height
-        tvPokemonWeight.text = data.weight
-        binding.tvPokemonDescription.text =
-            data.description.ifBlank { getString(R.string.no_description_available) }
-
-
-
-        containerTypes.removeAllViews()
-        data.types.forEach { type ->
-            val chip = TextView(requireContext()).apply {
-                text = type.replaceFirstChar { it.uppercase() }
-                setPadding(20, 10, 20, 10)
-                setTextColor(Color.WHITE)
-                textSize = 14f
-                background = resources.getDrawable(R.drawable.bg_type_chip)
-            }
-            val chipColor = PokemonType.fromString(type).color
-            containerTypes.addView(chip)
-            chip.background.setTint(chipColor)
-        }
-        containerStats.removeAllViews()
-        data.stats.forEach { (name, value) ->
-            val speciesColor = PokemonSpeciesColor.fromString(data.color).color
-            val itemStat = ItemStatRowBinding.inflate(layoutInflater, containerStats, false)
-            itemStat.tvStatName.text = name.uppercase()
-            itemStat.pbStat.progress = value
-            itemStat.pbStat.progressTintList = ColorStateList.valueOf(speciesColor)
-            itemStat.tvStatValue.text = value.toString()
-            containerStats.addView(itemStat.root)
-        }
-
-        btnFavorite.setOnClickListener {
+        binding.layoutDetailpokemon.btnFavorite.isSelected = data.isFavorite
+        binding.layoutDetailpokemon.btnFavorite.setOnClickListener {
             currentPokemonDetail?.let { viewModel.toggleFavorite(it) }
         }
     }

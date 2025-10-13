@@ -5,7 +5,9 @@ import com.google.gson.annotations.SerializedName
 data class PokemonSpeciesResponse(
     @SerializedName("flavor_text_entries")
     val flavorTextEntries: List<FlavorTextEntry?>? = null,
-    val color: PokemonColor? = null
+    val color: PokemonColor? = null,
+    @SerializedName("evolution_chain")
+    val evolutionChain: EvolutionChainRef? = null
 )
 
 data class PokemonColor(
@@ -22,4 +24,8 @@ data class FlavorTextEntry(
 data class Language(
     @SerializedName("name")
     val name: String? = null
+)
+
+data class EvolutionChainRef(
+    val url: String? = null
 )

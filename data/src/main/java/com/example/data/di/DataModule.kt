@@ -8,6 +8,9 @@ import com.example.data.repository.PokemonLocalRepository
 import com.example.data.repository.PokemonLocalRepositoryImpl
 import com.example.data.repository.PokemonRepository
 import com.example.data.repository.PokemonRepositoryImpl
+import com.example.data.usecase.GetPokemonDetailUseCase
+import com.example.data.usecase.GetPokemonListUseCase
+import com.example.data.usecase.PokemonDetailUseCaseImpl
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
@@ -27,6 +30,8 @@ val dataModule = module {
     single { get<AppDatabase>().pokemonFavoriteDao() }
     single<PokemonRepository> { PokemonRepositoryImpl(get(), get()) }
     single<PokemonLocalRepository> { PokemonLocalRepositoryImpl(get()) }
+    single<GetPokemonListUseCase> { GetPokemonListUseCase(get<PokemonRepository>()::getPokemonList) }
+    single<GetPokemonDetailUseCase> { PokemonDetailUseCaseImpl(get()) }
 }
 
 val networkModule = module {

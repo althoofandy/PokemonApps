@@ -34,4 +34,21 @@ suspend fun <Input, Output> processResponse(
     }
 }
 
+suspend fun <T, R> UiState<T>.flatMap(
+    block: suspend (T) -> UiState<R>
+): UiState<R> {
+    return when (this) {
+        is UiState.Success -> try {
+            block(this.data)
+        } catch (e: Exception) {
+            UiState.Error(e.message ?: "Exception occurred")
+        }
+
+        is UiState.Error -> UiState.Error(this.message, this.errorCode, null)
+        UiState.Empty -> UiState.Empty
+        UiState.Loading -> UiState.Loading
+        UiState.Uninitialized -> UiState.Uninitialized
+    }
+}
+
 

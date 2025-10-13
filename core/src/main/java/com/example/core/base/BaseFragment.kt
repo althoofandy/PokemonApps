@@ -1,10 +1,13 @@
 package com.example.core.base
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.graphics.ColorUtils
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 
@@ -17,6 +20,11 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     protected open fun fetchData() {}
     protected open fun observeData() {}
+    fun Activity.setStatusBarByColor(bgColor: Int) {
+        window.statusBarColor = bgColor
+        val isLight = ColorUtils.calculateLuminance(bgColor) > 0.5
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = isLight
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,8 +37,8 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fetchData()
         observeData()
+        fetchData()
     }
 
     override fun onDestroyView() {

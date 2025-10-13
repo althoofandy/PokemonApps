@@ -4,11 +4,11 @@
 
         <item
             android:id="@+id/homeFragment"
-            android:icon="@drawable/baseline_favorite_24"
+            android:icon="@drawable/baseline_home_filled_24"
             android:title="@string/home" />
         <item
             android:id="@+id/pokemonListFragment"
-            android:icon="@drawable/baseline_favorite_24"
+            android:icon="@drawable/baseline_search_24"
             android:title="Pokédex" />
         <item
             android:id="@+id/favoriteFragment"

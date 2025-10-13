@@ -1,5 +1,6 @@
 package com.example.features.ui.favorite
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,5 +43,10 @@ class FavoritePokemonFragment : BaseFragment<FragmentPokemonFavoriteBinding>() {
     private fun showEmpty(state: Boolean) = binding.apply {
         recyclerViewFavorites.visibility = if (state) View.GONE else View.VISIBLE
         tvEmpty.visibility = if (state) View.VISIBLE else View.GONE
+    }
+
+    override fun onResume() {
+        super.onResume()
+        requireActivity().setStatusBarByColor(Color.WHITE)
     }
 }

@@ -31,15 +31,6 @@
         tools:layout="@layout/fragment_pokemon_list" />
 
     <fragment
-        android:id="@+id/pokemonDetailFragment2"
-        android:name="com.example.features.ui.detail.PokemonDetailFragment2"
-        android:label="Pokemon Detail2">
-        <argument
-            android:name="pokeName"
-            app:argType="string" />
-    </fragment>
-
-    <fragment
         android:id="@+id/pokemonDetailFragment"
         android:name="com.example.features.ui.detail.PokemonDetailFragment"
         android:label="Pokemon Detail">

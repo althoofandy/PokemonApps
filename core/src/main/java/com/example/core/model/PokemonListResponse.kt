@@ -21,7 +21,13 @@ data class PokemonDetailResponse(
     val height: Int? = null,
     val weight: Int? = null,
     val description: String? = null,
-    val moves: List<MoveSlot>? = null
+    val moves: List<MoveSlot>? = null,
+    val species: SpeciesRef? = null
+)
+
+data class SpeciesRef(
+    val name: String? = null,
+    val url: String? = null
 )
 
 data class Sprites(

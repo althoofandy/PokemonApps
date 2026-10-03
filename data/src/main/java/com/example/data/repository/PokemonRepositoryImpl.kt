@@ -10,7 +10,10 @@ import com.example.core.model.PokemonSpeciesResponse
 import com.example.core.network.ApiService
 import com.example.core.utils.NetworkResultWrapper
 import com.example.core.utils.safeApiCall
+import com.example.data.mapper.toUiModel
 import com.example.data.paging.PokemonPagingSource
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 
 class PokemonRepositoryImpl(
@@ -27,15 +30,30 @@ class PokemonRepositoryImpl(
     override suspend fun getPokemonEvolutionChain(url: String): NetworkResultWrapper<PokemonChainResponse> =
         safeApiCall { apiService.getPokemonEvolutionChain(url) }
 
+    private val allPokemonMutex = Mutex()
+    private var allPokemonCache: List<PokemonListUiModel>? = null
+
     override fun getPokemonList(query: String): Pager<Int, PokemonListUiModel> {
         return Pager(
             config = PagingConfig(pageSize = 20),
-            pagingSourceFactory = { PokemonPagingSource(apiService, dispatcher, query) }
+            pagingSourceFactory = {
+                PokemonPagingSource(apiService, dispatcher, query, ::getAllPokemon)
+            }
         )
+    }
+
+    private suspend fun getAllPokemon(): List<PokemonListUiModel> = allPokemonMutex.withLock {
+        allPokemonCache ?: apiService.getPokemonList(limit = ALL_POKEMON_LIMIT, offset = 0)
+            .toUiModel()
+            .also { allPokemonCache = it }
     }
 
     override fun getPokemonImageUrl(id: Int): String {
         return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png"
+    }
+
+    private companion object {
+        const val ALL_POKEMON_LIMIT = 10_000
     }
 }
 

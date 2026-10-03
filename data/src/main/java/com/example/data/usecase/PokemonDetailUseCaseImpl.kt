@@ -15,12 +15,13 @@ class PokemonDetailUseCaseImpl(
 ) : GetPokemonDetailUseCase {
 
     override suspend fun invoke(name: String): UiState<PokemonDetailUIModel> {
-        val speciesState = processResponse(repository.getPokemonSpecies(name)) { it }
+        val detailState = processResponse(repository.getPokemonDetail(name)) { it }
 
-        return speciesState.flatMap { species ->
-            val detailState = processResponse(repository.getPokemonDetail(name)) { it }
+        return detailState.flatMap { detail ->
+            val speciesName = detail.species?.name ?: name
+            val speciesState = processResponse(repository.getPokemonSpecies(speciesName)) { it }
 
-            detailState.flatMap { detail ->
+            speciesState.flatMap { species ->
                 val flavorText = species.toFlavorText()
                 val colorSpecies = species.color?.name
                 val speciesUrl = species.evolutionChain?.url.orEmpty()

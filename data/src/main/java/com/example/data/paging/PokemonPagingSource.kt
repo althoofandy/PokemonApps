@@ -11,7 +11,8 @@ import kotlinx.coroutines.withContext
 class PokemonPagingSource(
     private val apiService: ApiService,
     private val dispatchers: CoroutinesDispatcherProvider,
-    private val query: String
+    private val query: String,
+    private val getAllPokemon: suspend () -> List<PokemonListUiModel>
 ) : PagingSource<Int, PokemonListUiModel>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PokemonListUiModel> {
@@ -20,30 +21,25 @@ class PokemonPagingSource(
 
         return try {
             val data = withContext(dispatchers.io) {
-                apiService.getPokemonList(limit, offset).toUiModel()
-            }
-            val filtered = if (query.isNotBlank()) {
-                data.filter { it.name.contains(query, ignoreCase = true) }
-            } else {
-                data
+                if (query.isBlank()) {
+                    apiService.getPokemonList(limit, offset).toUiModel()
+                } else {
+                    getAllPokemon()
+                        .filter { it.name.contains(query.trim(), ignoreCase = true) }
+                        .drop(offset)
+                        .take(limit)
+                }
             }
 
             LoadResult.Page(
-                data = filtered,
-                prevKey = if (offset == 0) null else offset - limit,
-                nextKey = if (filtered.isEmpty()) null else offset + limit
+                data = data,
+                prevKey = null,
+                nextKey = if (data.size < limit) null else offset + limit
             )
         } catch (e: Exception) {
             LoadResult.Error(e)
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Int, PokemonListUiModel>): Int? {
-        return state.anchorPosition?.let { position ->
-            val anchorPage = state.closestPageToPosition(position)
-            anchorPage?.prevKey?.plus(20) ?: anchorPage?.nextKey?.minus(20)
-        }
-    }
+    override fun getRefreshKey(state: PagingState<Int, PokemonListUiModel>): Int? = null
 }
-
-

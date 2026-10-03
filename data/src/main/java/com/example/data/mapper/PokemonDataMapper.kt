@@ -20,10 +20,13 @@ fun PokemonListResponse.toUiModel(): List<PokemonListUiModel> {
     } ?: emptyList()
 }
 
+private const val FALLBACK_FLAVOR_TEXT_LANGUAGE = "en"
+
 fun PokemonSpeciesResponse.toFlavorText(): String? {
     val lang = Locale.getDefault().language
-    return flavorTextEntries
-        ?.firstOrNull { it?.language?.name.equals(lang, true) }
+    val entries = flavorTextEntries.orEmpty().filterNotNull()
+    return (entries.firstOrNull { it.language?.name.equals(lang, true) }
+        ?: entries.firstOrNull { it.language?.name == FALLBACK_FLAVOR_TEXT_LANGUAGE })
         ?.flavorText
         ?.replace("\n", " ")
         ?.replace("\u000c", " ")

@@ -7,4 +7,6 @@ dependencies {
     api(libs.androidx.paging.common)
     api(libs.kotlinx.coroutines.core)
     implementation(libs.koin.core)
+
+    testImplementation(project(":core:testing"))
 }

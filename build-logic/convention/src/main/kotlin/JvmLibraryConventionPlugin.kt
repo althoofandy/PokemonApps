@@ -1,4 +1,5 @@
 import com.example.pokemonapps.buildlogic.JAVA_VERSION
+import com.example.pokemonapps.buildlogic.addUnitTestDependencies
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
@@ -18,5 +19,7 @@ class JvmLibraryConventionPlugin : Plugin<Project> {
         extensions.configure<KotlinJvmProjectExtension> {
             compilerOptions.jvmTarget.set(JvmTarget.JVM_17)
         }
+
+        addUnitTestDependencies()
     }
 }

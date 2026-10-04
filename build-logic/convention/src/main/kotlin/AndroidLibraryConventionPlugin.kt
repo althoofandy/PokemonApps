@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.LibraryExtension
+import com.example.pokemonapps.buildlogic.addUnitTestDependencies
 import com.example.pokemonapps.buildlogic.configureAndroidCommon
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -11,5 +12,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         extensions.configure<LibraryExtension> {
             configureAndroidCommon(this)
         }
+
+        addUnitTestDependencies()
     }
 }

@@ -1,6 +1,6 @@
 import com.android.build.api.dsl.LibraryExtension
-import com.example.pokemonapps.buildlogic.libs
 import com.example.pokemonapps.buildlogic.library
+import com.example.pokemonapps.buildlogic.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -19,6 +19,9 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             add("implementation", project(":core:ui"))
             add("implementation", libs.library("androidx-lifecycle-viewmodel-ktx"))
             add("implementation", libs.library("koin-android"))
+
+            add("testImplementation", project(":core:testing"))
+            add("testImplementation", libs.library("androidx-arch-core-testing"))
         }
     }
 }

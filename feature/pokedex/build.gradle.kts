@@ -9,4 +9,6 @@ android {
 dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.paging.runtime)
+
+    testImplementation(libs.androidx.paging.testing)
 }

@@ -23,8 +23,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":core"))
-    implementation(project(":data"))
+    implementation(project(":core:data"))
+    implementation(project(":core:domain"))
+    implementation(project(":core:ui"))
     implementation(project(":features"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

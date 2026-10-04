@@ -1,0 +1,4 @@
+<resources>
+    <string name="pokemon_image">Pokémon image</string>
+    <string name="no_pokemon_found_title">No Pokémon found</string>
+</resources>

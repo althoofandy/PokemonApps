@@ -4,10 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.core.model.EvolutionUIModel
+import com.example.core.model.PokemonEvolution
 import com.example.features.databinding.ItemEvolutionBinding
 
-class EvolutionAdapter(private val evolutions: List<EvolutionUIModel>) :
+class EvolutionAdapter(private val evolutions: List<PokemonEvolution>) :
     RecyclerView.Adapter<EvolutionAdapter.EvolutionViewHolder>() {
 
     inner class EvolutionViewHolder(val binding: ItemEvolutionBinding) :
@@ -24,7 +24,7 @@ class EvolutionAdapter(private val evolutions: List<EvolutionUIModel>) :
     override fun onBindViewHolder(holder: EvolutionViewHolder, position: Int) {
         val evo = evolutions[position]
         holder.binding.tvName.text = evo.name
-        holder.binding.tvLevel.text = evo.level ?: ""
+        holder.binding.tvLevel.text = evo.minLevel?.toString().orEmpty()
         Glide.with(holder.binding.ivPokemon).load(evo.imageUrl).into(holder.binding.ivPokemon)
     }
 }

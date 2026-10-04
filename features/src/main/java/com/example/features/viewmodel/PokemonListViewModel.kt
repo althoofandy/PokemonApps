@@ -1,30 +1,35 @@
 package com.example.features.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.liveData
-import com.example.core.model.PokemonListUiModel
-import com.example.data.usecase.GetPokemonListUseCase
+import com.example.core.domain.usecase.GetPokemonListUseCase
+import com.example.core.model.Pokemon
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapLatest
 
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class PokemonListViewModel(
     private val getPokemonListUseCase: GetPokemonListUseCase
 ) : ViewModel() {
 
-    private val queryLiveData = MutableLiveData("")
+    private val query = MutableStateFlow("")
 
-    val pokemonPagingData: LiveData<PagingData<PokemonListUiModel>> =
-        queryLiveData.switchMap { query ->
-            getPokemonListUseCase(query)
-                .liveData
-        }.cachedIn(viewModelScope)
+    val pokemonPagingData: Flow<PagingData<Pokemon>> = query
+        .debounce(SEARCH_DEBOUNCE_MILLIS)
+        .flatMapLatest { getPokemonListUseCase(it) }
+        .cachedIn(viewModelScope)
 
     fun searchPokemon(query: String) {
-        queryLiveData.value = query
+        this.query.value = query
+    }
+
+    private companion object {
+        const val SEARCH_DEBOUNCE_MILLIS = 200L
     }
 }
-

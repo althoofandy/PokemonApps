@@ -22,6 +22,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "PokemonApps"
 include(":app")
-include(":core")
+include(":core:model")
+include(":core:domain")
+include(":core:data")
+include(":core:ui")
 include(":features")
-include(":data")

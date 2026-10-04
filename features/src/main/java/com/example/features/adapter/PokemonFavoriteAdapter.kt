@@ -1,55 +1,28 @@
 package com.example.features.adapter
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.example.data.local.PokemonFavoriteEntity
-import com.example.features.databinding.ItemPokemonBinding
+import com.example.core.model.FavoritePokemon
+import com.example.core.ui.adapter.PokemonCardViewHolder
 
-class FavoritePokemonAdapter :
-    ListAdapter<PokemonFavoriteEntity, FavoritePokemonAdapter.ViewHolder>(DiffCallback()) {
+class FavoritePokemonAdapter(
+    private val onItemClick: (FavoritePokemon) -> Unit
+) : ListAdapter<FavoritePokemon, PokemonCardViewHolder>(DiffCallback) {
 
-    private var onItemClickListener: ((String) -> Unit)? = null
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        PokemonCardViewHolder.create(parent)
 
-    fun setOnItemClickListener(listener: (String) -> Unit) {
-        onItemClickListener = listener
+    override fun onBindViewHolder(holder: PokemonCardViewHolder, position: Int) {
+        val item = getItem(position)
+        holder.bind(item.name, item.imageUrl) { onItemClick(item) }
     }
 
-    inner class ViewHolder(private val binding: ItemPokemonBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        fun bind(pokemon: PokemonFavoriteEntity) = binding.apply {
-            tvName.text = pokemon.name
-            Glide.with(binding.ivPokemon.context)
-                .load(pokemon.imageUrl)
-                .into(binding.ivPokemon)
-            root.setOnClickListener {
-                onItemClickListener?.invoke(pokemon.name)
-            }
-        }
-    }
+    private object DiffCallback : DiffUtil.ItemCallback<FavoritePokemon>() {
+        override fun areItemsTheSame(oldItem: FavoritePokemon, newItem: FavoritePokemon) =
+            oldItem.id == newItem.id
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding =
-            ItemPokemonBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position))
-    }
-
-    class DiffCallback : DiffUtil.ItemCallback<PokemonFavoriteEntity>() {
-        override fun areItemsTheSame(
-            oldItem: PokemonFavoriteEntity,
-            newItem: PokemonFavoriteEntity
-        ) = oldItem.id == newItem.id
-
-        override fun areContentsTheSame(
-            oldItem: PokemonFavoriteEntity,
-            newItem: PokemonFavoriteEntity
-        ) = oldItem == newItem
+        override fun areContentsTheSame(oldItem: FavoritePokemon, newItem: FavoritePokemon) =
+            oldItem == newItem
     }
 }

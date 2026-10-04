@@ -1,7 +1,8 @@
 package com.example.pokemonapps
 
 import android.app.Application
-import com.example.data.di.dataModules
+import com.example.core.data.di.dataModules
+import com.example.core.domain.di.domainModule
 import com.example.features.di.featureModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -14,7 +15,7 @@ class PokemonApp : Application() {
         startKoin {
             androidLogger()
             androidContext(this@PokemonApp)
-            modules(dataModules + featureModule)
+            modules(dataModules + domainModule + featureModule)
         }
     }
 }

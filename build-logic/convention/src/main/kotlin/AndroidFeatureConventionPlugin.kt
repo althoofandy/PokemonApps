@@ -15,11 +15,9 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
         }
 
         dependencies {
-            add("implementation", libs.library("androidx-core-ktx"))
-            add("implementation", libs.library("androidx-appcompat"))
-            add("implementation", libs.library("androidx-fragment-ktx"))
+            add("implementation", project(":core:domain"))
+            add("implementation", project(":core:ui"))
             add("implementation", libs.library("androidx-lifecycle-viewmodel-ktx"))
-            add("implementation", libs.library("material"))
             add("implementation", libs.library("koin-android"))
         }
     }

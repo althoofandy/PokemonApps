@@ -3,8 +3,8 @@ package com.example.pokemonapps
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
-import com.example.core.utils.Constant.POKENAME_ARGS
-import com.example.core.utils.Navigator
+import com.example.core.ui.navigation.Constant.POKENAME_ARGS
+import com.example.core.ui.navigation.Navigator
 import com.example.pokemonapps.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), Navigator {

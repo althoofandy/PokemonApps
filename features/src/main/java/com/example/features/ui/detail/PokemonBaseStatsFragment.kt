@@ -1,20 +1,23 @@
 package com.example.features.ui.detail
 
 import android.content.res.ColorStateList
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.example.core.base.BaseFragment
-import com.example.core.model.PokemonDetailUIModel
+import com.example.core.model.PokemonDetail
+import com.example.core.ui.base.BaseFragment
+import com.example.core.ui.state.onSuccess
+import com.example.core.ui.utils.PokemonSpeciesColor
 import com.example.features.R
 import com.example.features.databinding.FragmentPokemonBaseStatsBinding
 import com.example.features.databinding.ItemStatRowBinding
+import com.example.features.viewmodel.PokemonDetailViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PokemonBaseStatsFragment : BaseFragment<FragmentPokemonBaseStatsBinding>() {
 
-    private val pokemonData by lazy {
-        arguments?.getParcelable<PokemonDetailUIModel>(ARG_PARAM1)
-    }
+    private val viewModel: PokemonDetailViewModel by viewModel(
+        ownerProducer = { requireParentFragment() }
+    )
 
     override fun getViewBinding(
         inflater: LayoutInflater,
@@ -22,36 +25,23 @@ class PokemonBaseStatsFragment : BaseFragment<FragmentPokemonBaseStatsBinding>()
     ) = FragmentPokemonBaseStatsBinding.inflate(inflater, container, false)
 
     override fun observeData() {
-        super.observeData()
-        pokemonData?.let { setupBaseStats(it) }
+        viewModel.pokemonDetail.observe(viewLifecycleOwner) { state ->
+            state.onSuccess(::setupBaseStats)
+        }
     }
 
-    private fun setupBaseStats(data: PokemonDetailUIModel) {
-        binding.tvTitle.text = getString(R.string.base_stats)
-        binding.containerStats.removeAllViews()
+    private fun setupBaseStats(pokemon: PokemonDetail) = with(binding) {
+        val speciesColor = PokemonSpeciesColor.fromString(pokemon.speciesColor).color
+        tvTitle.text = getString(R.string.base_stats)
+        statsContainer.removeAllViews()
 
-        data.stats.forEach { (name, value) ->
-            val speciesColor = data.color
-
-            val itemStat = ItemStatRowBinding.inflate(layoutInflater, binding.containerStats, false)
+        pokemon.stats.forEach { (name, value) ->
+            val itemStat = ItemStatRowBinding.inflate(layoutInflater, statsContainer, false)
             itemStat.tvStatName.text = name.uppercase()
             itemStat.pbStat.progress = value
             itemStat.pbStat.progressTintList = ColorStateList.valueOf(speciesColor)
             itemStat.tvStatValue.text = value.toString()
-
-            binding.containerStats.addView(itemStat.root)
+            statsContainer.addView(itemStat.root)
         }
-    }
-
-    companion object {
-        private const val ARG_PARAM1 = "param1"
-
-        @JvmStatic
-        fun newInstance(param1: PokemonDetailUIModel?) =
-            PokemonBaseStatsFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(ARG_PARAM1, param1)
-                }
-            }
     }
 }

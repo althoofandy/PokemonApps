@@ -2,20 +2,13 @@ package com.example.features.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.data.local.PokemonFavoriteEntity
-import com.example.data.repository.PokemonLocalRepository
-import kotlinx.coroutines.launch
+import androidx.lifecycle.asLiveData
+import com.example.core.domain.usecase.GetFavoritesUseCase
+import com.example.core.model.FavoritePokemon
 
 class FavoritePokemonViewModel(
-    private val localRepo: PokemonLocalRepository
+    getFavoritesUseCase: GetFavoritesUseCase
 ) : ViewModel() {
 
-    val favorites: LiveData<List<PokemonFavoriteEntity>> = localRepo.getFavorites()
-
-    fun removeFavorite(id: Int) {
-        viewModelScope.launch {
-            localRepo.removeFavorite(id)
-        }
-    }
+    val favorites: LiveData<List<FavoritePokemon>> = getFavoritesUseCase().asLiveData()
 }

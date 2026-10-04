@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="height">Tinggi</string>
+    <string name="weight">Berat</string>
+    <string name="base_stats">Statistik Dasar</string>
+    <string name="no_description_available">Tidak Ada Deskripsi yang Tersedia</string>
+</resources>

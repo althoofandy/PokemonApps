@@ -1,0 +1,4 @@
+<resources>
+    <string name="search">Search Pokémon</string>
+    <string name="no_pokemon_found_title_desc">Try searching again or check your connection.</string>
+</resources>

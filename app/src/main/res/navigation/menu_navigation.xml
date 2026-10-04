@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.features.ui.home.HomeFragment"
+        android:name="com.example.feature.home.HomeFragment"
         android:label="@string/home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/pokemonListFragment"
-        android:name="com.example.features.ui.list.PokemonListFragment"
+        android:name="com.example.feature.pokedex.PokemonListFragment"
         android:label="Pokédex"
         tools:layout="@layout/fragment_pokemon_list" />
 
     <fragment
         android:id="@+id/favoriteFragment"
-        android:name="com.example.features.ui.favorite.FavoritePokemonFragment"
+        android:name="com.example.feature.favorite.FavoritePokemonFragment"
         android:label="Favorites"
         tools:layout="@layout/fragment_pokemon_favorite" />
 

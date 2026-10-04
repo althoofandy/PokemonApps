@@ -16,23 +16,8 @@
     </fragment>
 
     <fragment
-        android:id="@+id/pokemonFavoriteFragment"
-        android:name="com.example.features.ui.favorite.FavoritePokemonFragment"
-        android:label="Pokemon Favorite">
-        <action
-            android:id="@+id/action_pokemonFavrotieFragment_to_pokemonDetailFragment"
-            app:destination="@id/pokemonDetailFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/pokemonListFragment"
-        android:name="com.example.features.ui.list.PokemonListFragment"
-        android:label="Pokemon List"
-        tools:layout="@layout/fragment_pokemon_list" />
-
-    <fragment
         android:id="@+id/pokemonDetailFragment"
-        android:name="com.example.features.ui.detail.PokemonDetailFragment"
+        android:name="com.example.feature.detail.PokemonDetailFragment"
         android:label="Pokemon Detail">
 
     <argument

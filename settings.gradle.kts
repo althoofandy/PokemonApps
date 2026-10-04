@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -21,6 +22,12 @@ dependencyResolutionManagement {
 
 rootProject.name = "PokemonApps"
 include(":app")
-include(":core")
-include(":features")
-include(":data")
+include(":core:model")
+include(":core:domain")
+include(":core:data")
+include(":core:ui")
+include(":core:testing")
+include(":feature:home")
+include(":feature:pokedex")
+include(":feature:detail")
+include(":feature:favorite")

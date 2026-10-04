@@ -25,36 +25,48 @@ A Pokédex Android app built on [PokeAPI](https://pokeapi.co/). Browse every Pok
 | Language | Kotlin, Coroutines |
 | UI | XML Views, ViewBinding, Material Components, ViewPager2 + TabLayout |
 | Navigation | Jetpack Navigation (nested nav graphs with bottom navigation) |
-| Architecture | MVVM, use cases, repository pattern, multi-module |
+| Architecture | Clean Architecture (domain/data/UI layers), MVVM, multi-module by layer and by feature |
 | Dependency injection | Koin |
 | Networking | Retrofit, OkHttp, Gson |
 | Pagination | Paging 3 |
 | Local storage | Room |
 | Image loading | Glide |
-| Build | Gradle 9.5 (Kotlin DSL), AGP 9.3 with built-in Kotlin, version catalog |
+| Build | Gradle 9.5 (Kotlin DSL), AGP 9.3 with built-in Kotlin, version catalog, convention plugins |
 
 ## Architecture
 
-The project is split into four Gradle modules:
+The app follows Clean Architecture and is split into modules by layer (`core:*`) and by feature (`feature:*`):
 
 ```mermaid
 graph TD
-    app --> features
-    app --> data
-    app --> core
-    features --> data
-    features --> core
-    data --> core
+    app --> feature:home & feature:pokedex & feature:detail & feature:favorite
+    app --> core:data
+    feature:home & feature:pokedex & feature:detail & feature:favorite --> core:domain & core:ui
+    core:data --> core:domain
+    core:domain --> core:model
+    core:ui --> core:model
 ```
 
-| Module | Responsibility |
-|---|---|
-| `app` | Application class, Koin setup, `MainActivity`, top-level navigation and bottom nav host |
-| `features` | Screens (fragments), ViewModels, RecyclerView/ViewPager adapters |
-| `data` | Repositories, use cases, Paging source, Retrofit and Room setup, response-to-UI mappers |
-| `core` | API service, network/UI models, `UiState`, `BaseFragment`, shared utilities |
+| Module | Type | Responsibility |
+|---|---|---|
+| `app` | Android app | Application class, Koin setup, `MainActivity`, navigation graphs and bottom navigation |
+| `feature:home` | Android library | Home screen with the EN/ID language switch |
+| `feature:pokedex` | Android library | Pokémon list with paging and search |
+| `feature:detail` | Android library | Detail screen and its About / Base Stats / Evolution tabs |
+| `feature:favorite` | Android library | Saved favorites |
+| `core:ui` | Android library | `BaseFragment`, `UiState`, navigation contract, theme, fonts, shared Pokémon card |
+| `core:domain` | Kotlin (JVM) | Repository interfaces and use cases |
+| `core:data` | Android library | Repository implementations, Retrofit, Room, Paging source, mappers |
+| `core:model` | Kotlin (JVM) | Domain models shared across layers |
 
-Data flows in one direction: **Fragment → ViewModel → Use case → Repository → PokeAPI / Room**. The detail use case combines three endpoints (`/pokemon`, `/pokemon-species`, and `/evolution-chain`) into a single `PokemonDetailUIModel` and exposes it through `UiState` (loading, success, error).
+Dependency rules:
+
+- **Feature modules depend only on `core:domain` and `core:ui`.** They never see Retrofit, Room, or each other, so a feature can be changed or removed without touching the others.
+- **`core:domain` and `core:model` are pure Kotlin** with no Android dependency, which keeps business logic fast to unit test.
+- **`core:data` keeps its implementation `internal`.** Only its Koin modules are public, and only domain models leave the module. `app` is the only module that knows about it, and wires it in through Koin.
+- Shared build setup (SDK levels, Java version, view binding, common dependencies) lives in convention plugins under [`build-logic`](build-logic), so each module's `build.gradle.kts` only declares what is specific to it.
+
+Data flows in one direction: **Fragment → ViewModel → Use case → Repository → PokeAPI / Room**. For example, `GetPokemonDetailUseCase` combines the repository's Pokémon detail (assembled from `/pokemon`, `/pokemon-species`, and `/evolution-chain`) with the favorite status from Room, and the ViewModel exposes the result to the UI as a `UiState` (loading, success, error).
 
 ## Getting Started
 

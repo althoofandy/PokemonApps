@@ -38,14 +38,64 @@ A Pokédex Android app built on [PokeAPI](https://pokeapi.co/). Browse every Pok
 The app follows Clean Architecture and is split into modules by layer (`core:*`) and by feature (`feature:*`):
 
 ```mermaid
-graph TD
-    app --> feature:home & feature:pokedex & feature:detail & feature:favorite
-    app --> core:data
-    feature:home & feature:pokedex & feature:detail & feature:favorite --> core:domain & core:ui
-    core:data --> core:domain
-    core:domain --> core:model
-    core:ui --> core:model
+flowchart TB
+    app["app<br/>(composition root)"]
+
+    subgraph presentation["Presentation layer"]
+        home["feature:home"]
+        subgraph features["Features with data"]
+            pokedex["feature:pokedex"]
+            detail["feature:detail"]
+            favorite["feature:favorite"]
+        end
+        ui["core:ui"]
+    end
+
+    subgraph domainLayer["Domain layer (pure Kotlin)"]
+        domain["core:domain"]
+        model["core:model"]
+    end
+
+    subgraph dataLayer["Data layer"]
+        data["core:data"]
+    end
+
+    home --> ui
+    features --> ui
+    features --> domain
+    data -->|implements| domain
+    domain --> model
+
+    app -.-> presentation
+    app -.-> dataLayer
 ```
+
+Solid arrows are compile-time dependencies and always point toward the domain layer. `core:data` depends on `core:domain` because it implements the repository interfaces defined there, not the other way around. The dotted arrows show `app` acting as the composition root: it only puts the modules together and wires `core:data` into the domain through Koin, so no feature ever depends on the data layer.
+
+How a request flows through the modules:
+
+```mermaid
+flowchart LR
+    subgraph feature["feature:*"]
+        fragment["Fragment"] --> viewModel["ViewModel"]
+    end
+
+    subgraph domainModule["core:domain"]
+        useCase["Use case"] --> repository["Repository interface"]
+    end
+
+    subgraph dataModule["core:data"]
+        repositoryImpl["Repository implementation"] --> api[("PokeAPI")]
+        repositoryImpl --> room[("Room")]
+    end
+
+    viewModel --> useCase
+    repository -. implemented by .-> repositoryImpl
+```
+
+The result travels back as domain models from `core:model`: the repository returns a `Result`, the ViewModel turns it into a `UiState` exposed as `StateFlow`, and the fragment renders it.
+
+For example, `GetPokemonDetailUseCase` combines the repository's Pokémon detail (assembled from `/pokemon`, `/pokemon-species`, and `/evolution-chain`) with the favorite status from Room, and the ViewModel exposes the result to the UI as a `UiState` (loading, success, error) through a `StateFlow`.
 
 | Module | Type | Responsibility |
 |---|---|---|
@@ -65,8 +115,6 @@ Dependency rules:
 - **`core:domain` and `core:model` are pure Kotlin** with no Android dependency, which keeps business logic fast to unit test.
 - **`core:data` keeps its implementation `internal`.** Only its Koin modules are public, and only domain models leave the module. `app` is the only module that knows about it, and wires it in through Koin.
 - Shared build setup (SDK levels, Java version, view binding, common dependencies) lives in convention plugins under [`build-logic`](build-logic), so each module's `build.gradle.kts` only declares what is specific to it.
-
-Data flows in one direction: **Fragment → ViewModel → Use case → Repository → PokeAPI / Room**. For example, `GetPokemonDetailUseCase` combines the repository's Pokémon detail (assembled from `/pokemon`, `/pokemon-species`, and `/evolution-chain`) with the favorite status from Room, and the ViewModel exposes the result to the UI as a `UiState` (loading, success, error).
 
 ## Getting Started
 

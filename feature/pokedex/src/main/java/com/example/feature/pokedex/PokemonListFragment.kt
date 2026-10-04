@@ -5,9 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,8 +13,6 @@ import com.example.core.ui.navigation.Navigator
 import com.example.feature.pokedex.adapter.PokemonListAdapter
 import com.example.feature.pokedex.adapter.PokemonLoadStateAdapter
 import com.example.feature.pokedex.databinding.FragmentPokemonListBinding
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PokemonListFragment : BaseFragment<FragmentPokemonListBinding>() {
@@ -70,11 +65,7 @@ class PokemonListFragment : BaseFragment<FragmentPokemonListBinding>() {
     override fun observeData() {
         super.observeData()
         setRecyclerView()
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.pokemonPagingData.collectLatest(adapter::submitData)
-            }
-        }
+        viewModel.pokemonPagingData.collectWithLifecycle(adapter::submitData)
 
         binding.tieSearch.addTextChangedListener { text ->
             viewModel.searchPokemon(text.toString())

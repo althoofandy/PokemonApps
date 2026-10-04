@@ -37,11 +37,12 @@ class PokemonDetailFragment : BaseFragment<FragmentPokemonDetailBinding>() {
     }
 
     override fun observeData() {
-        viewModel.pokemonDetail.observe(viewLifecycleOwner) { state ->
+        viewModel.pokemonDetail.collectWithLifecycle { state ->
             showLoading(binding.progressBar, state.isLoading)
             state.onSuccess(::updateUI)
             state.onError {
                 showToast("Error")
+                viewModel.onErrorShown()
             }
         }
     }

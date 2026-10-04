@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.core.ui.base.BaseFragment
 import com.example.core.ui.navigation.Navigator
+import com.example.core.ui.state.UiState
 import com.example.feature.favorite.adapter.FavoritePokemonAdapter
 import com.example.feature.favorite.databinding.FragmentPokemonFavoriteBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -29,9 +30,18 @@ class FavoritePokemonFragment : BaseFragment<FragmentPokemonFavoriteBinding>() {
         super.observeData()
         binding.recyclerViewFavorites.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewFavorites.adapter = adapter
-        viewModel.favorites.observe(viewLifecycleOwner) { list ->
-            adapter.submitList(list)
-            showEmpty(list.isEmpty())
+        viewModel.favorites.collectWithLifecycle { state ->
+            when (state) {
+                is UiState.Success -> {
+                    adapter.submitList(state.data)
+                    showEmpty(false)
+                }
+                UiState.Empty -> {
+                    adapter.submitList(emptyList())
+                    showEmpty(true)
+                }
+                else -> Unit
+            }
         }
     }
 

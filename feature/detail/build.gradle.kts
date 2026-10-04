@@ -7,6 +7,5 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.github.glide)
 }

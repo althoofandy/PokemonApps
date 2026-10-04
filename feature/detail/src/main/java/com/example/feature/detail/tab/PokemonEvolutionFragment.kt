@@ -24,7 +24,7 @@ class PokemonEvolutionFragment : BaseFragment<FragmentPokemonEvolutionBinding>()
     override fun observeData() {
         binding.recyclerEvolution.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        viewModel.pokemonDetail.observe(viewLifecycleOwner) { state ->
+        viewModel.pokemonDetail.collectWithLifecycle { state ->
             state.onSuccess { binding.recyclerEvolution.adapter = EvolutionAdapter(it.evolutions) }
         }
     }

@@ -5,7 +5,3 @@ plugins {
 android {
     namespace = "com.example.feature.favorite"
 }
-
-dependencies {
-    implementation(libs.androidx.lifecycle.livedata.ktx)
-}

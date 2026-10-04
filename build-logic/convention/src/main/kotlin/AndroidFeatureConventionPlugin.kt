@@ -21,7 +21,6 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             add("implementation", libs.library("koin-android"))
 
             add("testImplementation", project(":core:testing"))
-            add("testImplementation", libs.library("androidx-arch-core-testing"))
         }
     }
 }

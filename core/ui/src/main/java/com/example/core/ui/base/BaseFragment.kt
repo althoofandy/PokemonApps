@@ -9,7 +9,13 @@ import android.widget.Toast
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewbinding.ViewBinding
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
@@ -52,5 +58,13 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     protected fun showLoading(view: View, state: Boolean) {
         view.visibility = if (state) View.VISIBLE else View.GONE
+    }
+
+    protected fun <T> Flow<T>.collectWithLifecycle(action: suspend (T) -> Unit) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                collectLatest(action)
+            }
+        }
     }
 }

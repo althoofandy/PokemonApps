@@ -1,7 +1,5 @@
 package com.example.feature.detail
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.LiveData
 import com.example.core.domain.usecase.GetPokemonDetailUseCase
 import com.example.core.domain.usecase.ToggleFavoriteUseCase
 import com.example.core.model.PokemonDetail
@@ -10,6 +8,8 @@ import com.example.core.testing.repository.FakeFavoriteRepository
 import com.example.core.testing.repository.FakePokemonRepository
 import com.example.core.testing.rule.MainDispatcherRule
 import com.example.core.ui.state.UiState
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -17,10 +17,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class PokemonDetailViewModelTest {
-
-    @get:Rule
-    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
@@ -38,13 +36,20 @@ class PokemonDetailViewModelTest {
     }
 
     @Test
+    fun `initial state is uninitialized`() {
+        assertEquals(UiState.Uninitialized, viewModel.pokemonDetail.value)
+    }
+
+    @Test
     fun `loading the detail emits loading then success`() = runTest {
         pokemonRepository.detailResult = Result.success(TestData.bulbasaur)
-        val states = viewModel.pokemonDetail.recordValues()
+        pokemonRepository.detailDelayMillis = 1_000
 
         viewModel.getPokemonDetail("bulbasaur")
+        assertEquals(UiState.Loading, viewModel.pokemonDetail.value)
 
-        assertEquals(listOf(UiState.Loading, UiState.Success(TestData.bulbasaur)), states)
+        advanceUntilIdle()
+        assertEquals(UiState.Success(TestData.bulbasaur), viewModel.pokemonDetail.value)
     }
 
     @Test
@@ -54,6 +59,26 @@ class PokemonDetailViewModelTest {
         viewModel.getPokemonDetail("missingno")
 
         assertEquals(UiState.Error<PokemonDetail>(message = "Not found"), viewModel.pokemonDetail.value)
+    }
+
+    @Test
+    fun `error is cleared once it has been shown`() = runTest {
+        pokemonRepository.detailResult = Result.failure(IllegalStateException("Not found"))
+        viewModel.getPokemonDetail("missingno")
+
+        viewModel.onErrorShown()
+
+        assertEquals(UiState.Uninitialized, viewModel.pokemonDetail.value)
+    }
+
+    @Test
+    fun `clearing the error keeps a loaded detail untouched`() = runTest {
+        pokemonRepository.detailResult = Result.success(TestData.bulbasaur)
+        viewModel.getPokemonDetail("bulbasaur")
+
+        viewModel.onErrorShown()
+
+        assertEquals(UiState.Success(TestData.bulbasaur), viewModel.pokemonDetail.value)
     }
 
     @Test
@@ -88,10 +113,4 @@ class PokemonDetailViewModelTest {
 
     private fun PokemonDetailViewModel.currentDetail(): PokemonDetail? =
         (pokemonDetail.value as? UiState.Success)?.data
-
-    private fun <T> LiveData<T>.recordValues(): List<T> {
-        val values = mutableListOf<T>()
-        observeForever { values += it }
-        return values
-    }
 }

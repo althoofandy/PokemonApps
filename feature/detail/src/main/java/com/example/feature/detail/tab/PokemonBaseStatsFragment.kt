@@ -25,7 +25,7 @@ class PokemonBaseStatsFragment : BaseFragment<FragmentPokemonBaseStatsBinding>()
     ) = FragmentPokemonBaseStatsBinding.inflate(inflater, container, false)
 
     override fun observeData() {
-        viewModel.pokemonDetail.observe(viewLifecycleOwner) { state ->
+        viewModel.pokemonDetail.collectWithLifecycle { state ->
             state.onSuccess(::setupBaseStats)
         }
     }
